@@ -794,6 +794,35 @@ ZutiloChrome.zoteroOverlay = {
         return true;
     },
 
+    copyZoteroSelectLinkWithCollection: function() {
+        const collection = ZutiloChrome.zoteroOverlay.Collection.selected()
+        if (!collection) return
+
+        var prefix
+        if (collection.libraryID === Zotero.Libraries.userLibraryID) {
+          prefix = `zotero://select/library/collections/${collection.key}`
+        } else {
+          prefix = `zotero://select/groups/${Zotero.Groups.getGroupIDFromLibraryID(collection.libraryID)}/collections/${collection.key}`
+        }
+      
+        var zitems = this.getSelectedItems();
+        var links = [];
+
+        if (!this.checkItemNumber(zitems, 'regularNoteAttachment1')) {
+            return false;
+        }
+
+        for (var ii = 0; ii < zitems.length; ii++) {
+            links.push(prefix + '/items/' + zitems[ii].key)
+        }
+
+        var clipboardText = links.join('\r\n');
+
+        this._copyToClipboard(clipboardText)
+
+        return true;
+    },
+
     _getZoteroItemURI: function() {
         let zitems = this.getSelectedItems();
         let links = [];
